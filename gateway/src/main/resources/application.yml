@@ -1,0 +1,44 @@
+server:
+  port: 8080
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+#actuator
+#management.endpoints.web.exposure.include: "*"
+
+spring:
+  application:
+    name: GATEWAY
+
+  security.oauth2:
+    resourceserver:
+      jwt:
+        jwk-set-uri: http://localhost:7080/realms/eshop/protocol/openid-connect/certs
+    client:
+      provider:
+        keycloak:
+          issuer-uri: http://localhost:7080/realms/eshop
+      registration:
+        eshop_gateway:
+          provider: keycloak
+          client-id: eshop_gateway
+          client-secret: i9YQvJCTzcoWxWqcXmcedYR0tX0isjqD
+          authorization-grant-type: authorization_code
+          scope: openid
+
+  cloud:
+  #  inetutils:
+  #    preferred-networks: localhost
+
+
+    gateway:
+      default-filters:
+        - TokenRelay=
+      routes:
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+          - Path=/products/**

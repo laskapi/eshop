@@ -1,0 +1,30 @@
+server:
+  port: 8081
+
+eureka:
+    client:
+      serviceUrl:
+       defaultZone: http://localhost:8761/eureka/
+
+spring:
+  application:
+    name: PRODUCT-SERVICE
+
+  datasource:
+    driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/product_service_db
+    username: admin
+    password: admin
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+
+  security.oauth2.resourceserver.jwt:
+    jwk-set-uri: http://localhost:7080/realms/eshop/protocol/openid-connect/certs
+
+  #cloud:
+   # inetutils:
+    #  preferred-networks: localhost
