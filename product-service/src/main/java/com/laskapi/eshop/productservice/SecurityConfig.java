@@ -22,10 +22,7 @@ import org.springframework.stereotype.Component;
 
 public class SecurityConfig {
 
-    /* @Autowired
-     @Qualifier("customAuthenticationEntryPoint")
-     AuthenticationEntryPoint authEntryPoint;
- */ Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
+    Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
 @Autowired
     private DiscoveryClient dc;
@@ -37,10 +34,11 @@ public class SecurityConfig {
 
                 .exceptionHandling(handl -> handl.accessDeniedHandler((request, response, accessDeniedException) -> {
                     response.sendRedirect("www.onet.pl");
-                    logger.error("My Accept Denied Exception{}", accessDeniedException.getMessage());
+                    logger.error("My access Denied handler: {}", accessDeniedException.getMessage());
                 }).authenticationEntryPoint((request, response, authException) ->{
                     var redirectService= dc.getInstances("gateway").get(0);
-                                    response.sendRedirect(String.valueOf(redirectService.getUri()+":"+request.));
+                                    response.sendRedirect(String.valueOf(redirectService.getUri()
+                                    ));
                 }));
 
         return http.build();

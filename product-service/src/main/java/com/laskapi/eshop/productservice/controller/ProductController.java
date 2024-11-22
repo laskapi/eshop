@@ -1,24 +1,32 @@
 package com.laskapi.eshop.productservice.controller;
 
-import com.laskapi.eshop.productservice.dto.ProductDTO;
+import com.laskapi.eshop.productservice.dto.ProductDto;
+import com.laskapi.eshop.productservice.exception.ProductServiceException;
+import com.laskapi.eshop.productservice.service.ProductService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
+
+    @Autowired
+    ProductService productService;
 
     @GetMapping("/")
     public String getMe(){
         return "It's me";
     }
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProductById(@PathVariable("id") long id) {
-        ProductDTO response = ProductDTO.builder().price(id).name("reebok").build();
+    public ResponseEntity<ProductDto> getProductById(@PathVariable("id") long id) {
+        ProductDto response = ProductDto.builder().price(id).name("Testable product").build();
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @ExceptionHandler(ProductServiceException.class)
+    public ResponseEntity<String> handleException(ProductServiceException exception){
+        return new ResponseEntity<>(exception.getMessage(),exception.getHttpStatus());
     }
 }
