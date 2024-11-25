@@ -6,11 +6,8 @@ import com.laskapi.eshop.productservice.exception.ProductServiceException;
 import com.laskapi.eshop.productservice.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.ParameterOutOfBoundsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @Service
 @RequiredArgsConstructor
@@ -43,15 +40,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void increaseQuantity(long productId, long quantity) {
+    public long increaseQuantity(long productId, long quantity) {
         Product product = repository.findById(productId).orElseThrow();
         product.setQuantity(product.getQuantity() + quantity);
         repository.save(product);
-        log.info("Product %s quantity succesfully incresed".formatted(product.getProductName()));
+        log.info("Product %s quantity successfully increased".formatted(product.getProductName()));
+        return product.getQuantity();
     }
 
     @Override
-    public void reduceQuantity(long productId, long quantity) {
+    public long reduceQuantity(long productId, long quantity) {
         Product product = repository.findById(productId).orElseThrow();
         long oldQuantity = product.getQuantity();
         if (oldQuantity < quantity)
@@ -59,13 +57,14 @@ public class ProductServiceImpl implements ProductService {
 
         product.setQuantity(oldQuantity - quantity);
         repository.save(product);
-        log.info("Product %s quantity succesfully reduced".formatted(product.getProductName());
+        log.info("Product %s quantity successfully reduced".formatted(product.getProductName()));
+        return product.getQuantity();
     }
 
     @Override
     public void deleteProductById(long productId) {
         Product product = repository.findById(productId).orElseThrow(() -> new ProductServiceException("Product not " +
-                "exists",HttpStatus.NOT_FOUND));
+                "exists", HttpStatus.NOT_FOUND));
         repository.deleteById(productId);
         log.info("Product %s deleted".formatted(product.getProductName()));
     }

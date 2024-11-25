@@ -7,9 +7,9 @@ public interface ProductService {
 
     ProductDto getProductById(long productId);
 
-    void increaseQuantity(long productId, long quantity);
+    long increaseQuantity(long productId, long quantity);
 
-    void reduceQuantity(long productId, long quantity);
+    long reduceQuantity(long productId, long quantity);
 
     void deleteProductById(long productId);
 }
