@@ -1,38 +1,42 @@
 package com.laskapi.eshop.productservice.controller;
 
 import com.laskapi.eshop.productservice.dto.ProductDto;
-import com.laskapi.eshop.productservice.exception.ProductServiceException;
+import com.laskapi.eshop.productservice.exception.CustomServiceException;
 import com.laskapi.eshop.productservice.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/products/")
+@RequestMapping("/products")
 public class ProductController {
 
     @Autowired
     ProductService productService;
 
-    @GetMapping
-    public String getMe() {
-        return "How can I help You?";
+    @GetMapping("/")
+    public ResponseEntity<List<ProductDto>> getMe() {
+        List<ProductDto> results= productService.getAllProducts();
+        return ResponseEntity.ok(results);
     }
 
-    @PostMapping
+    @PostMapping("/")
     public ResponseEntity<Long> addProduct(@RequestBody ProductDto product) {
-        long productId = productService.addProduct(product);
+
+        long productId = productService.addProduct(product).getId();
         return new ResponseEntity<>(productId, HttpStatus.CREATED);
     }
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable long id) {
         ProductDto product = productService.getProductById(id);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
-    @PatchMapping("{id}")
-    public ResponseEntity<Long> increaseQuantity(@PathVariable("id") long productId, @RequestParam long quantity,
+    @PatchMapping("/{id}")
+    public ResponseEntity<Long> changeQuantity(@PathVariable("id") long productId, @RequestParam long quantity,
                                                  @RequestParam(defaultValue = "true") boolean increase) {
         long resultQuantity;
         if(increase) {
@@ -44,7 +48,7 @@ public class ProductController {
         return ResponseEntity.ok(resultQuantity);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable("id") long productId){
         productService.deleteProductById(productId);
         return new ResponseEntity<>("",HttpStatus.NO_CONTENT);
@@ -52,8 +56,8 @@ public class ProductController {
 
 
 
-    @ExceptionHandler(ProductServiceException.class)
-    public ResponseEntity<String> handleException(ProductServiceException exception) {
+    @ExceptionHandler(CustomServiceException.class)
+    public ResponseEntity<String> handleException(CustomServiceException exception) {
         return new ResponseEntity<>(exception.getMessage(), exception.getHttpStatus());
     }
 }
