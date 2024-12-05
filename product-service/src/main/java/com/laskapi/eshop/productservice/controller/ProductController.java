@@ -1,6 +1,7 @@
 package com.laskapi.eshop.productservice.controller;
 
 import com.laskapi.eshop.productservice.dto.ProductDto;
+import com.laskapi.eshop.productservice.entity.Product;
 import com.laskapi.eshop.productservice.exception.CustomServiceException;
 import com.laskapi.eshop.productservice.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +26,20 @@ public class ProductController {
 
     @PostMapping("/")
     public ResponseEntity<Long> addProduct(@RequestBody ProductDto product) {
-
         long productId = productService.addProduct(product).getId();
         return new ResponseEntity<>(productId, HttpStatus.CREATED);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable long id) {
         ProductDto product = productService.getProductById(id);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Product> updateProduct(@PathVariable long id, @RequestBody ProductDto productDto){
+        return ResponseEntity.ok(productService.updateProduct(id,productDto));
+}
 
     @PatchMapping("/{id}")
     public ResponseEntity<Long> changeQuantity(@PathVariable("id") long productId, @RequestParam long quantity,

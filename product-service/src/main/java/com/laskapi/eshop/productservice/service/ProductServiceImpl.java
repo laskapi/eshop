@@ -23,18 +23,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product addProduct(ProductDto productDto) {
-        Category category=
-                categoryRepository.findById(productDto.getCategory_id()).orElseThrow(()->new CustomServiceException(
-                        "No such category",HttpStatus.NOT_FOUND));
+        Category category =
+                categoryRepository.findById(productDto.getCategory_id()).orElseThrow(() -> new CustomServiceException(
+                        "No such category", HttpStatus.NOT_FOUND));
 
-        Product product = Product.builder()
+        Product product=productRepository.save( Product.builder()
                 .name(productDto.getName())
                 .category(category)
                 .price(productDto.getPrice())
                 .quantity(productDto.getQuantity())
-                .build();
-
-        productRepository.save(product);
+                .build());
         log.info("Product %s added".formatted(product.getName()));
 
         return product;
@@ -56,9 +54,27 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public List<ProductDto> getProductsByCategory(String category) {
-        Category cat=categoryRepository.findByName(category);
+        Category cat = categoryRepository.findByName(category);
         return productRepository.findAllByCategory(cat).stream().map(ProductDto::new).toList();
     }
+
+
+    @Override
+    public Product updateProduct(long id, ProductDto productDto) {
+        Category cat= categoryRepository.findById(productDto.getCategory_id()).orElseThrow(
+                ()->new CustomServiceException("No such category",HttpStatus.NOT_FOUND));
+
+       return productRepository.findById(id).map(product->
+       {
+           product.setName(productDto.getName());
+           product.setCategory(cat);
+           product.setPrice(productDto.getPrice());
+           product.setQuantity(productDto.getQuantity());
+          return productRepository.save(product);
+       }).orElseGet(()-> addProduct(productDto));
+
+    }
+
 
     @Override
     public long increaseQuantity(long productId, long quantity) {
@@ -89,4 +105,6 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(productId);
         log.info("Product %s deleted".formatted(product.getName()));
     }
+
+
 }

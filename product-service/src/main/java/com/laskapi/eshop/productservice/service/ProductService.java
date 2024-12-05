@@ -19,4 +19,7 @@ public interface ProductService {
     long reduceQuantity(long productId, long quantity);
 
     void deleteProductById(long productId);
+
+    Product updateProduct(long id, ProductDto productDto);
 }
+

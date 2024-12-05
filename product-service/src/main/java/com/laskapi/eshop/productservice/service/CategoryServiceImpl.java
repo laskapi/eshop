@@ -31,24 +31,25 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category addCategory(Category category) {
-        return categoryRepo.save(category);
+        if (category.getParent_id() == 0
+                || categoryRepo.existsById(category.getParent_id())) {
+            return categoryRepo.save(category);
+        }
+        throw new CustomServiceException("Must be root or have parent element",HttpStatus.NOT_ACCEPTABLE);
     }
 
     @Override
     public Category updateCategory(Category category) {
-        if (!categoryRepo.existsById(category.getId())) {
-            throw new CustomServiceException("Category doesn't exist", HttpStatus.NOT_FOUND);
-        }
-        return categoryRepo.save(category);
 
+       return categoryRepo.findById(category.getId()).map(oldCat->
+                {
+                    category.setId(oldCat.getId());
+                    return categoryRepo.save(category);
+                }).orElseGet(()->addCategory(category));
     }
 
     @Override
     public void deleteCategory(Long id) {
-        if (id == null) {
-            categoryRepo.deleteAll();
-        } else {
             categoryRepo.deleteById(id);
-        }
     }
 }
