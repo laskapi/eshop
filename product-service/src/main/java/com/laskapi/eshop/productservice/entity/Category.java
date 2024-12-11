@@ -1,13 +1,22 @@
 package com.laskapi.eshop.productservice.entity;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
-@Data
-@Builder
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+
 public class Category {
+
+    @Builder
+    public Category(String name, long parent_id) {
+        this.name = name;
+        this.parent_id = parent_id;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

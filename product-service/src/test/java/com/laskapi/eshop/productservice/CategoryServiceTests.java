@@ -33,8 +33,7 @@ public class CategoryServiceTests {
 
     @BeforeAll
     public static void setup(){
-        category= Category.builder().
-                id(1L)
+        category= Category.builder()
                 .name("Test category")
                 .parent_id(0L)
                 .build();
@@ -44,7 +43,7 @@ public class CategoryServiceTests {
     public void getCategories(){
         List<Category> results=new ArrayList<>();
         results.add(category);
-        results.add(Category.builder().id(2L).name("drugi").parent_id(1L).build());
+        results.add(Category.builder().name("drugi").parent_id(1L).build());
         given(categoryRespository.findAll(Sort.by("id"))).willReturn(results);
         List<Category> response=categoryService.getCategories();
         assertThat(response).isEqualTo(results);
@@ -68,7 +67,7 @@ public class CategoryServiceTests {
 
     @Test
     void updateCategory() {
-        Category cat= Category.builder().id(1L).name("updated").parent_id(1L).build();
+        Category cat= Category.builder().name("updated").parent_id(1L).build();
         given(categoryRespository.findById(1L)).willReturn(Optional.of(category));
         given(categoryRespository.save(cat)).willReturn(cat);
         Category result=categoryService.updateCategory(cat);

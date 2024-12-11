@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,18 +20,19 @@ import org.springframework.stereotype.Component;
 @Component
 @Configuration
 @EnableWebSecurity
-
+@Profile("!test")
 public class SecurityConfig {
 
     Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
-@Autowired
+    @Autowired
     private DiscoveryClient dc;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated()).oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults()))
 
+        http.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated()).oauth2ResourceServer(oauth2
+        -> oauth2.jwt(Customizer.withDefaults()))
 
                 .exceptionHandling(handl -> handl.accessDeniedHandler((request, response, accessDeniedException) -> {
                     response.sendRedirect("www.onet.pl");
@@ -39,7 +41,8 @@ public class SecurityConfig {
                     var redirectService= dc.getInstances("gateway").get(0);
                                     response.sendRedirect(String.valueOf(redirectService.getUri()
                                     ));
-                }));
+                }))
+        ;
 
         return http.build();
     }

@@ -14,7 +14,7 @@ import java.util.List;
 @Log4j2
 @RestController
 
-@RequestMapping("/categories")
+@RequestMapping(path = "/categories", produces="application/json" )
 public class CategoryController {
     @Autowired
     CategoryService categoryService;
@@ -30,9 +30,9 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getCategory(id));
     }
 
-    @PostMapping("/")
-    public ResponseEntity<Long> addCategory(@RequestBody Category category) {
-        return ResponseEntity.ok(categoryService.addCategory(category).getId());
+    @PostMapping
+    public ResponseEntity<Category> addCategory(@RequestBody Category category) {
+        return categoryService.addCategory(category);
     }
 
     @PutMapping("/")

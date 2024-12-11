@@ -27,7 +27,7 @@ spring:
   security.oauth2.resourceserver.jwt:
     jwk-set-uri: http://localhost:7080/realms/eshop/protocol/openid-connect/certs
 
-
+debug: false
 
 
 

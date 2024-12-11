@@ -7,8 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -30,26 +30,30 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category addCategory(Category category) {
+    public ResponseEntity<Category> addCategory(Category category) {
         if (category.getParent_id() == 0
                 || categoryRepo.existsById(category.getParent_id())) {
-            return categoryRepo.save(category);
+            try {
+                return ResponseEntity.ok(categoryRepo.save(category));
+            } catch (Exception e) {
+                return new ResponseEntity<>(categoryRepo.findByName(category.getName()),HttpStatus.NOT_ACCEPTABLE);
+            }
         }
-        throw new CustomServiceException("Must be root or have parent element",HttpStatus.NOT_ACCEPTABLE);
+        throw new CustomServiceException("Must be root or have parent element", HttpStatus.NOT_ACCEPTABLE);
     }
 
     @Override
     public Category updateCategory(Category category) {
 
-       return categoryRepo.findById(category.getId()).map(oldCat->
-                {
-                    category.setId(oldCat.getId());
-                    return categoryRepo.save(category);
-                }).orElseGet(()->addCategory(category));
+        return categoryRepo.findById(category.getId()).map(oldCat ->
+        {
+            category.setId(oldCat.getId());
+            return categoryRepo.save(category);
+        }).orElseGet(() -> addCategory(category).getBody());
     }
 
     @Override
     public void deleteCategory(Long id) {
-            categoryRepo.deleteById(id);
+        categoryRepo.deleteById(id);
     }
 }

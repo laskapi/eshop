@@ -1,8 +1,7 @@
 package com.laskapi.eshop.productservice.service;
 
 import com.laskapi.eshop.productservice.entity.Category;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -12,7 +11,7 @@ public interface CategoryService {
 
     Category getCategory(long id);
 
-    Category addCategory(Category category);
+    ResponseEntity<Category> addCategory(Category category);
 
     Category updateCategory(Category category);
 

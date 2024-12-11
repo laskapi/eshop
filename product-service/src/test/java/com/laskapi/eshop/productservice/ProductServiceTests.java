@@ -38,7 +38,7 @@ class ProductServiceTests {
     @BeforeEach
     void setUp() {
 
-        category=Category.builder().name("test category").id(1).parent_id(0).build();
+        category=Category.builder().name("test category").parent_id(0).build();
 
         product=Product.builder().id(1L).name("test product").price(20).quantity(40).category(category).build();
         productDto=new ProductDto(product);
